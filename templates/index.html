@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Special+Elite&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div id="setup-screen" class="setup-screen">
+        <div class="setup-card">
+            <div class="setup-postmark">POST</div>
+            <h1 id="setup-heading">Create your address</h1>
+            <p class="setup-copy" id="setup-copy">Post is slow on purpose. Letters travel for as long as they would in
+                real life, so you'll need a real address and a password to protect it.</p>
+
+            <div class="setup-tabs">
+                <button class="setup-tab active" data-mode="signup">Create an address</button>
+                <button class="setup-tab" data-mode="login">I already have one</button>
+            </div>
+
+            <form id="signup-form">
+                <label for="su-name">Your name</label>
+                <input id="su-name" type="text" placeholder="Full name" maxlength="60" required>
+
+                <label for="su-line1">Address line 1</label>
+                <input id="su-line1" type="text" placeholder="House number and street" maxlength="120" required>
+
+                <label for="su-line2">Address line 2 <span class="optional">(optional)</span></label>
+                <input id="su-line2" type="text" placeholder="Flat, building, etc." maxlength="120">
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="su-city">Town / city</label>
+                        <input id="su-city" type="text" maxlength="80" required>
+                    </div>
+                    <div class="field">
+                        <label for="su-postcode">Postcode / ZIP</label>
+                        <input id="su-postcode" type="text" maxlength="20" required>
+                    </div>
+                </div>
+
+                <label for="su-country">Country</label>
+                <input id="su-country" type="text" placeholder="e.g. United Kingdom" maxlength="60" required>
+
+                <label for="su-password">Password</label>
+                <input id="su-password" type="password" placeholder="At least 6 characters" minlength="6" required>
+
+                <label for="su-password-confirm">Confirm password</label>
+                <input id="su-password-confirm" type="password" minlength="6" required>
+
+                <p class="setup-hint" id="location-hint">
+                    We'll also ask your browser for your device's location, purely as a sanity check that
+                    this address is roughly right.
+                </p>
+
+                <p class="form-error" id="signup-error" hidden></p>
+                <button type="submit" class="wax-button">Create address</button>
+            </form>
+
+            <form id="login-form" class="hidden">
+                <label for="li-line1">Address line 1</label>
+                <input id="li-line1" type="text" placeholder="House number and street" maxlength="120" required>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="li-city">Town / city</label>
+                        <input id="li-city" type="text" maxlength="80" required>
+                    </div>
+                    <div class="field">
+                        <label for="li-postcode">Postcode / ZIP</label>
+                        <input id="li-postcode" type="text" maxlength="20" required>
+                    </div>
+                </div>
+
+                <label for="li-country">Country</label>
+                <input id="li-country" type="text" placeholder="e.g. United Kingdom" maxlength="60" required>
+
+                <label for="li-password">Password</label>
+                <input id="li-password" type="password" required>
+
+                <p class="form-error" id="login-error" hidden></p>
+                <button type="submit" class="wax-button">Open my letterbox</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app" class="app hidden">
+
+        <header class="masthead">
+            <div class="masthead-left">
+                <span class="brand-mark">Post</span>
+                <span class="brand-tagline">the wonderfully slow way to write</span>
+            </div>
+            <button id="identity-chip" class="identity-chip" title="Log out">
+                <span id="identity-name">-</span>
+                <span id="identity-address" class="identity-address">-</span>
+                <span class="identity-logout">Log out</span>
+            </button>
+        </header>
+
+        <div class="layout">
+
+            <nav class="pigeonholes">
+                <button class="hole active" data-tab="compose">
+                    <span>Write a letter</span>
+                </button>
+                <button class="hole" data-tab="outbox">
+                    <span>Out for delivery</span>
+                    <span class="hole-count" id="outbox-count" hidden>0</span>
+                </button>
+                <button class="hole" data-tab="inbox">
+                    <span>Your inbox</span>
+                    <span class="hole-count" id="inbox-count" hidden>0</span>
+                </button>
+            </nav>
+
+            <main class="desk">
+
+                <!-- COMPOSE -->
+                <section class="pane" id="pane-compose">
+                    <div class="paper-sheet">
+                        <h2 class="pane-title">A new letter</h2>
+                        <form id="compose-form">
+                            <label for="recipient-name">Recipient's name</label>
+                            <input id="recipient-name" type="text" placeholder="Who is this for?" maxlength="60"
+                                required>
+
+                            <label for="r-line1">Their address line 1</label>
+                            <input id="r-line1" type="text" placeholder="House number and street" maxlength="120"
+                                required>
+
+                            <label for="r-line2">Address line 2 <span class="optional">(optional)</span></label>
+                            <input id="r-line2" type="text" maxlength="120">
+
+                            <div class="field-row">
+                                <div class="field">
+                                    <label for="r-city">Town / city</label>
+                                    <input id="r-city" type="text" maxlength="80" required>
+                                </div>
+                                <div class="field">
+                                    <label for="r-postcode">Postcode / ZIP</label>
+                                    <input id="r-postcode" type="text" maxlength="20" required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="r-country">Country</label>
+                                <input id="r-country" type="text" placeholder="e.g. United Kingdom" maxlength="60"
+                                    required>
+                            </div>
+
+                            <div class="field">
+                                <label for="subject">Subject</label>
+                                <input id="subject" type="text" placeholder="What's this about?" maxlength="80">
+                            </div>
+                            <div class="field">
+                                <label for="message">Your letter</label>
+                                <textarea id="message" rows="10" placeholder="Dear ..." maxlength="4000"
+                                    required></textarea>
+                            </div>
+
+                            <div class="stamp-picker">
+                                <p class="stamp-picker-label">Choose your stamp</p>
+                                <div class="stamp-options">
+                                    <label class="stamp-option">
+                                        <input type="radio" name="stamp_class" value="1st" checked>
+                                        <span class="stamp stamp-1st">
+                                            <span class="stamp-value">1st</span>
+                                        </span>
+                                        <span class="stamp-desc">Quicker. Costs a little more.</span>
+                                    </label>
+                                    <label class="stamp-option">
+                                        <input type="radio" name="stamp_class" value="2nd">
+                                        <span class="stamp stamp-2nd">
+                                            <span class="stamp-value">2nd</span>
+                                        </span>
+                                        <span class="stamp-desc">Unhurried. Costs a little less.</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <p class="form-error" id="compose-error" hidden></p>
+                            <button type="submit" class="wax-button" id="send-button">
+                                <span>Seal and post it</span>
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- OUTBOX -->
+                <section class="pane hidden" id="pane-outbox">
+                    <h2 class="pane-title">Out for delivery</h2>
+                    <p class="pane-subtitle">Letters you've sent, mid-journey.</p>
+                    <div class="letter-list" id="outbox-list"></div>
+                    <p class="empty-state" id="outbox-empty" hidden>Nothing in the post yet. Write your first letter.
+                    </p>
+                </section>
+
+                <!-- INBOX -->
+                <section class="pane hidden" id="pane-inbox">
+                    <h2 class="pane-title">Your inbox</h2>
+                    <p class="pane-subtitle">Letters addressed to you.</p>
+                    <div class="letter-list" id="inbox-list"></div>
+                    <p class="empty-state" id="inbox-empty" hidden>No post today. Give your address to someone.</p>
+                </section>
+
+            </main>
+        </div>
+
+        <footer class="app-footer">Address lookup provided by OpenStreetMap Nominatim.</footer>
+    </div>
+
+    <!-- Send confirmation overlay -->
+    <div class="overlay hidden" id="send-overlay">
+        <div class="send-scene">
+            <div class="envelope-rig">
+                <div class="letter-slip" id="anim-letter"></div>
+                <div class="envelope-body">
+                    <div class="envelope-flap" id="anim-flap"></div>
+                    <div class="envelope-stamp" id="anim-stamp"></div>
+                </div>
+            </div>
+            <div class="postmark-stamp" id="anim-postmark">POSTED</div>
+            <p class="send-caption" id="send-caption">Sealing your letter…</p>
+            <p class="send-detail" id="send-detail"></p>
+            <button class="ghost-button hidden" id="send-overlay-close">Back to the desk</button>
+        </div>
+    </div>
+
+    <!-- Read letter overlay -->
+    <div class="overlay hidden" id="read-overlay">
+        <div class="read-scene">
+            <div class="read-envelope" id="read-envelope">
+                <div class="read-flap" id="read-flap"></div>
+                <div class="read-body">
+                    <p class="read-hint" id="read-hint">Tap to open</p>
+                </div>
+            </div>
+            <div class="letter-page hidden" id="letter-page">
+                <p class="letter-meta" id="letter-meta"></p>
+                <h3 class="letter-subject" id="letter-subject"></h3>
+                <p class="letter-body" id="letter-body"></p>
+                <p class="letter-sign" id="letter-sign"></p>
+            </div>
+            <button class="ghost-button" id="read-overlay-close">Close</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" hidden></div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>
