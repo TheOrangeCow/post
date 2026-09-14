@@ -11,7 +11,7 @@ import os
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('POST_SECRET_KEY', 'dev-secret-key-change-me')
+app.secret_key = os.environ.get('POST_SECRET_KEY')
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'mail.db')
 
